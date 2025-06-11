@@ -1,15 +1,15 @@
-terraform {
-  backend "gcs" {
-    bucket = "terraform-state-iotweather-projet-sequence-5-dev"
-    prefix = "vm/iotweather"
-  }
-}
-
 provider "google" {
   credentials = var.gcp_credentials
   project     = var.project_id
   region      = var.region
   zone        = var.zone
+}
+
+terraform {
+  backend "gcs" {
+    bucket = "terraform-state-iotweather-projet-sequence-5-dev"
+    prefix = "vm/iotweather"
+  }
 }
 
 # Image Ubuntu 22.04 LTS la plus récente
