@@ -1,6 +1,23 @@
 const express = require('express');
 const db = require('../utils/db');
+const { httpRequestCounter } = require('../utils/metrics');
 const router = express.Router();
+
+
+router.use((req, res, next) => {
+  res.on('finish', () => {
+    const route = (req.baseUrl + req.path).replace(/\/$/, '') || '/';
+    console.log(`Request ${req.method} ${route} => ${res.statusCode}`);
+    httpRequestCounter.inc({
+      method: req.method,
+      route: route,
+      status: res.statusCode,
+    });
+  });
+  next();
+});
+
+
 
 /**
  * @swagger

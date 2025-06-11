@@ -8,6 +8,8 @@ const swaggerJsdoc = require('swagger-jsdoc');
 
 const infosRouter = require('./routes/infos');
 const packageJson = require('../package.json');
+const { register } = require('./utils/metrics');
+
 
 const app = express();
 
@@ -37,6 +39,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/iot', infosRouter);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+  } catch (ex) {
+    res.status(500).end(ex);
+  }
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
