@@ -19,12 +19,11 @@ jobs:
         with:
           terraform_version: 1.6.6
 
-      - name: Créer le dossier infra/ s'il n'existe pas
-        run: mkdir -p ${{ github.workspace }}/infra
-
-      - name: Créer credentials.json depuis le secret base64
+      - name: Authentifier GCP pour Terraform (backend GCS)
         run: |
+          mkdir -p ${{ github.workspace }}/infra
           echo "${{ secrets.GCP_CREDENTIALS }}" | base64 -d > ${{ github.workspace }}/infra/credentials.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/infra/credentials.json" >> $GITHUB_ENV
 
       - name: Plan Terraform
         working-directory: infra
