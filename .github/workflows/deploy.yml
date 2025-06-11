@@ -98,7 +98,7 @@ jobs:
       - name: Créer un snapshot du disque
         run: |
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-          gcloud compute disks snapshot api-vm \
+          gcloud compute disks snapshot api-vm-dev \
             --snapshot-names=snapshot-api-$TIMESTAMP \
             --zone=europe-west9-b \
             --project=${{ secrets.GCP_PROJECT_ID }}
