@@ -35,3 +35,7 @@ coverage/
 
 # infra 
 infra/
+# Clé ssh 
+.ssh/
+.ssh/id_rsa
+.ssh/id_rsa.pub

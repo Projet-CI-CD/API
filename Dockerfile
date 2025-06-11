@@ -13,7 +13,7 @@ RUN npm install
 # Copie le reste du code
 COPY . .
 
-ENV PORT=8080
+ENV PORT=3000
 
 # Expose le port (à adapter si nécessaire)
 EXPOSE $PORT
