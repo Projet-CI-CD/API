@@ -18,7 +18,7 @@ resource "google_compute_network" "vpc_network" {
 
 # Firewall : autorise SSH et API (3000)
 resource "google_compute_firewall" "default" {
-  name    = "allow-ssh-http"
+  name    = "allow-ssh-http-dev"
   network = google_compute_network.vpc_network.name
 
   allow {
