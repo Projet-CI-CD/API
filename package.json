@@ -1,11 +1,11 @@
 {
   "name": "api",
-  "version": "2.49.0",
+  "version": "2.50.0",
   "private": true,
   "scripts": {
     "start": "node api/bin/www",
-    "test": "../node_modules/.bin/jest",
-    "lint": "../node_modules/.bin/eslint api"
+    "test": "jest",
+    "lint": "eslint api"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
