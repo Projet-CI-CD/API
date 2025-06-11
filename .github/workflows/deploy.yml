@@ -3,7 +3,7 @@ name: Provision & Déploiement API
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   terraform:
