@@ -96,6 +96,6 @@ jobs:
         run: |
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
           gcloud compute disks snapshot api-vm \
-            --snapshot-names=snapshot-api-$TIMESTAMP \
+            --snapshot-names=snapshot-api-dev-$TIMESTAMP \
             --zone=europe-west9-b \
             --project=${{ secrets.GCP_PROJECT_ID }}
