@@ -1,3 +1,10 @@
+terraform {
+  backend "gcs" {
+    bucket = "terraform-state-iotweather-projet-sequence-5-dev"
+    prefix = "vm/iotweather"
+  }
+}
+
 provider "google" {
   credentials = var.gcp_credentials
   project     = var.project_id
