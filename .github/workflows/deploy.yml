@@ -3,7 +3,7 @@ name: Provision & Déploiement API
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   terraform:
@@ -19,11 +19,9 @@ jobs:
         with:
           terraform_version: 1.6.6
 
-      - name: Authentifier GCP pour Terraform (backend GCS)
+      - name: Créer credentials.json depuis le secret base64
         run: |
-          mkdir -p ${{ github.workspace }}/infra
           echo "${{ secrets.GCP_CREDENTIALS }}" | base64 -d > ${{ github.workspace }}/infra/credentials.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/infra/credentials.json" >> $GITHUB_ENV
 
       - name: Plan Terraform
         working-directory: infra
@@ -97,7 +95,7 @@ jobs:
       - name: Créer un snapshot du disque
         run: |
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-          gcloud compute disks snapshot api-vm-dev \
-            --snapshot-names=snapshot-api-$TIMESTAMP \
+          gcloud compute disks snapshot api-vm \
+            --snapshot-names=snapshot-api-dev-$TIMESTAMP \
             --zone=europe-west9-b \
             --project=${{ secrets.GCP_PROJECT_ID }}
