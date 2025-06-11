@@ -18,13 +18,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ceome3scoketcd"
+        "uid": "beomi0bwjnc3kd"
       },
       "fieldConfig": {
         "defaults": {
@@ -91,7 +91,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ceome3scoketcd"
+        "uid": "beomi0bwjnc3kd"
       },
       "fieldConfig": {
         "defaults": {
@@ -171,7 +171,7 @@
       "targets": [
         {
           "disableTextWrap": false,
-          "editorMode": "code",
+          "editorMode": "builder",
           "expr": "process_resident_memory_bytes{instance=\"iot-api:3000\"} / 1048576",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -187,7 +187,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ceome3scoketcd"
+        "uid": "beomi0bwjnc3kd"
       },
       "fieldConfig": {
         "defaults": {
@@ -268,7 +268,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "100 * rate(process_cpu_system_seconds_total{instance=\"iot-api:3000\"}[1m])",
+          "expr": "100 * sum(irate(process_cpu_system_seconds_total{instance=\"iot-api:3000\"}[1m]))\r\n",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "CPU %",
@@ -283,7 +283,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ceome3scoketcd"
+        "uid": "beomi0bwjnc3kd"
       },
       "fieldConfig": {
         "defaults": {
@@ -367,8 +367,8 @@
             "uid": "ceome3scoketcd"
           },
           "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(route) (rate(http_requests_total[$__rate_interval])) * 60",
+          "editorMode": "code",
+          "expr": "sum by(route) (increase(http_requests_total[1m]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
@@ -388,12 +388,12 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
-    "to": "now"
+    "from": "2025-06-11T09:39:39.232Z",
+    "to": "2025-06-11T10:04:35.925Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Dashboard",
   "uid": "a3c6d05e-2852-471d-8a56-851a5bff4d20",
-  "version": 1
+  "version": 3
 }
