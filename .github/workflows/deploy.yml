@@ -132,7 +132,8 @@ jobs:
             --sort-by=~creationTimestamp \
             --limit=1 \
             --format="value(name)")
-          echo "snapshot=$SNAPSHOT" >> "$GITHUB_OUTPUT"
+          echo "Nom du snapshot récupéré : $SNAPSHOT"
+          echo "snapshot=$SNAPSHOT" >> $GITHUB_OUTPUT
 
       - name: Détacher et supprimer le disque corrompu
         run: |
