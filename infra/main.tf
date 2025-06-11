@@ -5,13 +5,6 @@ provider "google" {
   zone        = var.zone
 }
 
-terraform {
-  backend "gcs" {
-    bucket = "terraform-state-iotweather-projet-sequence-5-dev"
-    prefix = "vm/iotweather"
-  }
-}
-
 # Image Ubuntu 22.04 LTS la plus récente
 data "google_compute_image" "ubuntu" {
   family  = "ubuntu-2204-lts"
@@ -20,12 +13,12 @@ data "google_compute_image" "ubuntu" {
 
 # Réseau VPC
 resource "google_compute_network" "vpc_network" {
-  name = "api-network-dev"
+  name = "api-network"
 }
 
 # Firewall : autorise SSH et API (3000)
 resource "google_compute_firewall" "default" {
-  name    = "allow-ssh-http-dev"
+  name    = "allow-ssh-http"
   network = google_compute_network.vpc_network.name
 
   allow {
@@ -38,7 +31,7 @@ resource "google_compute_firewall" "default" {
 
 # VM Ubuntu
 resource "google_compute_instance" "vm_instance" {
-  name         = "api-vm-dev"
+  name         = "api-vm"
   machine_type = "e2-medium"
   zone         = var.zone
 
