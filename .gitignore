@@ -32,3 +32,6 @@ coverage/
 
 # Base de données SQLite
 *.db
+
+# infra 
+infra/
