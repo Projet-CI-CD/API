@@ -1,6 +1,23 @@
 const express = require('express');
 const db = require('../utils/db');
+const { httpRequestCounter } = require('../utils/metrics');
 const router = express.Router();
+
+
+router.use((req, res, next) => {
+  res.on('finish', () => {
+    const route = (req.baseUrl + req.path).replace(/\/$/, '') || '/';
+    console.log(`Request ${req.method} ${route} => ${res.statusCode}`);
+    httpRequestCounter.inc({
+      method: req.method,
+      route: route,
+      status: res.statusCode,
+    });
+  });
+  next();
+});
+
+
 
 /**
  * @swagger
@@ -97,6 +114,45 @@ router.get('/data', (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     res.json(rows);
+  });
+});
+
+/**
+ * @swagger
+ * /iot:
+ *   post:
+ *     summary: Ajouter des données IoT
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Info'
+ *     responses:
+ *       201:
+ *         description: Données ajoutées avec succès
+ */
+router.post('/', (req, res) => {
+  const { device_id, temperature, humidity, timestamp, type } = req.body;
+  console.log(req.body);
+
+  if (!device_id || !temperature || !humidity || !timestamp || !type) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const query = 'INSERT INTO infos (device_id, temperature, humidity, timestamp, type) VALUES (?, ?, ?, ?, ?)';
+  db.run(query, [device_id, temperature, humidity, timestamp, type], function (err) {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.status(201).json({
+      id: this.lastID,
+      device_id,
+      temperature,
+      humidity,
+      timestamp,
+      type
+    });
   });
 });
 
