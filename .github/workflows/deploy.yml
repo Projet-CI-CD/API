@@ -95,7 +95,56 @@ jobs:
       - name: Créer un snapshot du disque
         run: |
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-          gcloud compute disks snapshot api-vm \
+          gcloud compute disks snapshot api-vm-dev \
             --snapshot-names=snapshot-api-dev-$TIMESTAMP \
             --zone=europe-west9-b \
             --project=${{ secrets.GCP_PROJECT_ID }}
+
+  restore:
+    name: Restaurer depuis le dernier snapshot si échec
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: ansible
+
+    steps:
+      - name: Cloner le dépôt
+        uses: actions/checkout@v3
+
+      - name: Installer gcloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: 'latest'
+
+      - name: Authentifier manuellement gcloud avec clé base64
+        run: |
+          echo "${{ secrets.GCP_CREDENTIALS }}" | base64 -d > gcp-key.json
+          gcloud auth activate-service-account --key-file=gcp-key.json
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud config set compute/zone europe-west9-b
+
+      - name: Récupérer le dernier snapshot disponible
+        id: last_snapshot
+        run: |
+          SNAPSHOT=$(gcloud compute snapshots list \
+            --filter="name~^snapshot-api-dev-" \
+            --sort-by=~creationTimestamp \
+            --limit=1 \
+            --format="value(name)")
+          echo "snapshot=$SNAPSHOT" >> "$GITHUB_OUTPUT"
+
+      - name: Détacher et supprimer le disque corrompu
+        run: |
+          gcloud compute instances detach-disk api-vm-dev --disk=api-vm-dev --zone=europe-west9-b || true
+          gcloud compute disks delete api-vm-dev --zone=europe-west9-b --quiet || true
+
+      - name: Recréer le disque à partir du snapshot
+        run: |
+          gcloud compute disks create api-vm-dev \
+            --source-snapshot=${{ steps.last_snapshot.outputs.snapshot }} \
+            --zone=europe-west9-b
+
+      - name: Rattacher le disque à la VM
+        run: |
+          gcloud compute instances attach-disk api-vm-dev \
+            --disk=api-vm-dev \
+            --zone=europe-west9-b
